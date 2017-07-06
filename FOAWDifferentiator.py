@@ -1,3 +1,11 @@
+##################################################################################
+# File: FOAWDifferentiator.py
+# Brief :A class that implements a first order adaptive windowing differentiator 
+# Author: Mathieu Bresciani <brescianimathieu@gmail.com>
+# From:  Discrete-Time Adaptive Windowing for Velocity Estimation
+# Farrokh Janabi-Sharifi, Vincent Hayward, and Chung-Shin J. Chen
+##################################################################################
+
 class FOAWDifferentiator:
 
     def __init__(self, dt, noise_level):

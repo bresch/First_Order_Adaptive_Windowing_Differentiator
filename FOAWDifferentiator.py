@@ -75,7 +75,7 @@ class FOAWDifferentiator:
             self._last_window_size = 0
             return 0.0
         
-        for window_size in range(2, self._nb_samples-1):
+        for window_size in range(2, self._nb_samples):
             self.best_fit_FAOW(window_size)
             slope = self._a
 

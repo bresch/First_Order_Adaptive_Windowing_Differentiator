@@ -1,9 +1,10 @@
 from FOAWDifferentiator import FOAWDifferentiator as FOAW
+from FOAWDifferentiator import enumFOAWAlgorithm as algo
 import numpy as np
 import pylab as p
 
 dt = 1 
-diff = FOAW(dt,0.35)
+diff = FOAW(dt,0.35, algo.bestFit)
 x = [0,1,2,3,4,5,6,7,7,7,7,10,20,25,40,10,4,5,4,5,4,3,2,1,40,40,41,41,42,42,43,43,39,38,40,45]
 t = range(0,len(x))
 

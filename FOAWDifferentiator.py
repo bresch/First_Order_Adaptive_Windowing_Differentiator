@@ -6,12 +6,16 @@
 # Farrokh Janabi-Sharifi, Vincent Hayward, and Chung-Shin J. Chen
 ##################################################################################
 
+class enumFOAWAlgorithm:
+    endFit, bestFit, bestFitR = range(3)
+
 class FOAWDifferentiator:
 
-    def __init__(self, dt, noise_level):
+    def __init__(self, dt, noise_level, algorithm):
         self.set_noise_level(noise_level)
         self.set_sample_time(dt)
         self._max_window_size = 14
+        self._algorithm = algorithm
         self.reset()
 
     def set_noise_level(self, noise_level):
@@ -19,6 +23,9 @@ class FOAWDifferentiator:
 
     def set_sample_time(self, dt):
         self._dt = dt
+
+    def set_algorithm(self, algorithm):
+        self._algorithm = algorithm
 
     def get_last_window_size(self):
         return self._last_window_size
@@ -40,6 +47,14 @@ class FOAWDifferentiator:
     def shift_buffer(self):
         for i in range(0,self._nb_samples-1):
             self._buffer[i] = self._buffer[i+1]
+
+    def end_fit_FOAW(self, window_size):
+        last_sample_pos = self._nb_samples - 1
+
+        d_amplitude = self._buffer[last_sample_pos] - self._buffer[last_sample_pos - window_size]
+        d_time = window_size * self._dt
+        self._a = d_amplitude / d_time
+        self._b = self._buffer[last_sample_pos]
 
     def best_fit_FAOW(self, window_size):
         sum1 = 0.0
@@ -76,7 +91,14 @@ class FOAWDifferentiator:
             return 0.0
         
         for window_size in range(2, self._nb_samples):
-            self.best_fit_FAOW(window_size)
+
+            if self._algorithm == enumFOAWAlgorithm.endFit or self._algorithm == enumFOAWAlgorithm.bestFit: 
+                self.end_fit_FOAW(window_size)
+            elif self._algorithm == enumFOAWAlgorithm.bestFitR:
+                self.best_fit_FAOW(window_size)
+            else:
+                return 0 # Unknown algorithm
+
             slope = self._a
 
             for j in range(1,window_size):
@@ -98,6 +120,9 @@ class FOAWDifferentiator:
                 self._last_window_size = window_size
             else:
                 break
+
+            if self._algorithm == enumFOAWAlgorithm.bestFit:
+                self.best_fit_FAOW(self._last_window_size)
 
         return result
 
